@@ -1,0 +1,69 @@
+T-106 live authentication API tests — 2026-10-28 15:58:15
+base: http://localhost:8081 (dev port APP_PORT; DB: inventory_db as inventory_app via local .env — credentials never displayed)
+
+== TC-01 register (valid) ==
+HTTP 201
+{"created_at":"2026-10-28T15:58:23.368934+05:30","email":"tc01@example.test","id":1}
+
+result: account created (201)
+
+== TC-02 duplicate email ==
+{"error":"email is already registered"}
+
+HTTP 409
+
+== validation: bad email (expect 400) ==
+{"error":"a valid email address is required"}
+
+HTTP 400
+
+== validation: short password (expect 400) ==
+{"error":"password must be between 8 and 72 characters"}
+
+HTTP 400
+
+== validation: malformed json (expect 400) ==
+{"error":"invalid request body"}
+
+HTTP 400
+
+== TC-05 login correct credentials, mixed-case email (token masked) ==
+{"expires_at":"2026-10-29T15:58:23.7232224+05:30","token":"<MASKED-JWT>.<MASKED-JWT>…
+token received: yes (length 208, masked everywhere)
+
+== TC-06 wrong password (expect 401) ==
+{"error":"invalid email or password"}
+
+HTTP 401
+
+== TC-06b unknown email (expect 401, same message) ==
+{"error":"invalid email or password"}
+
+HTTP 401
+
+== TC-07 logout without token (expect 401) ==
+{"error":"missing or malformed Authorization header"}
+
+HTTP 401
+
+== TC-08 logout with garbage token (expect 401) ==
+{"error":"invalid or expired token"}
+
+HTTP 401
+
+== TC-09 logout with valid token (expect 200) ==
+{"message":"logged out; discard the token client-side (stateless JWTs are not server-revoked)"}
+
+HTTP 200
+
+== healthz remains public (expect 200) ==
+{"status":"ok","database":"up","uptime_seconds":1,"time":"2026-10-28T10:28:24Z"}
+
+
+=== server startup log (no secrets) ===
+2026/10/28 15:58:22 config: loaded (db=inventory_db user=inventory_app host=localhost port=5432 sslmode=disable app_port=8081 jwt_ttl=24h)
+2026/10/28 15:58:23 database: connection pool ready
+2026/10/28 15:58:23 http: listening on :8081
+cleanup: server stopped, temp files removed
+verify: users (bcrypt hash format):
+  tc01@example.test        true

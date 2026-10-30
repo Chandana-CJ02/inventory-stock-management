@@ -1,0 +1,16 @@
+=== RUN   TestProductCRUDIntegration
+=== RUN   TestProductCRUDIntegration/validation/negative_price
+=== RUN   TestProductCRUDIntegration/validation/fractional_opening_stock
+=== RUN   TestProductCRUDIntegration/validation/negative_opening_stock
+=== RUN   TestProductCRUDIntegration/validation/negative_min_stock
+=== RUN   TestProductCRUDIntegration/validation/missing_name
+=== RUN   TestProductCRUDIntegration/validation/missing_sku
+--- PASS: TestProductCRUDIntegration (0.15s)
+    --- PASS: TestProductCRUDIntegration/validation/negative_price (0.00s)
+    --- PASS: TestProductCRUDIntegration/validation/fractional_opening_stock (0.00s)
+    --- PASS: TestProductCRUDIntegration/validation/negative_opening_stock (0.00s)
+    --- PASS: TestProductCRUDIntegration/validation/negative_min_stock (0.00s)
+    --- PASS: TestProductCRUDIntegration/validation/missing_name (0.00s)
+    --- PASS: TestProductCRUDIntegration/validation/missing_sku (0.00s)
+PASS
+ok  	inventory-backend/internal/api	2.349s

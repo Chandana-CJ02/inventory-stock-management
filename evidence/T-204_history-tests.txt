@@ -1,0 +1,5 @@
+ok  	inventory-backend/internal/api	3.545s
+ok  	inventory-backend/internal/auth	1.560s
+ok  	inventory-backend/internal/config	0.459s
+--- PASS: TestTransactionHistoryIntegration (0.07s)
+PASS

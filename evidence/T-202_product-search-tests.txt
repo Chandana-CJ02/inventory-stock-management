@@ -1,0 +1,14 @@
+ok  	inventory-backend/internal/api	3.324s
+ok  	inventory-backend/internal/auth	1.903s
+ok  	inventory-backend/internal/config	1.009s
+--- PASS: TestProductSearchIntegration (0.07s)
+    --- PASS: TestProductSearchIntegration/TC-30_search_by_name_substring_is_case-insensitive (0.01s)
+    --- PASS: TestProductSearchIntegration/TC-30_search_by_name_fragment (0.00s)
+    --- PASS: TestProductSearchIntegration/TC-31_search_by_SKU (0.00s)
+    --- PASS: TestProductSearchIntegration/TC-31_search_by_exact_SKU (0.00s)
+    --- PASS: TestProductSearchIntegration/TC-32_filter_by_category (0.00s)
+    --- PASS: TestProductSearchIntegration/TC-32_combined_search_+_category_filter (0.00s)
+    --- PASS: TestProductSearchIntegration/TC-32_filter_with_no_matches (0.00s)
+    --- PASS: TestProductSearchIntegration/AC-02_search_never_returns_other_users'_products (0.00s)
+    --- PASS: TestProductSearchIntegration/invalid_category_id_filter_is_rejected (0.00s)
+PASS

@@ -1,0 +1,12 @@
+# Local secrets — never commit
+.env
+
+# Build artifacts
+*.exe
+
+# Node / frontend
+node_modules/
+dist/
+
+# Assignment source document — local only, excluded from the public repository
+Chandana 1.docx

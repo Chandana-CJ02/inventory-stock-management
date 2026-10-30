@@ -1,0 +1,51 @@
+TC-46: Mixed-direction concurrent stock operations — 2026-10-29 15:52:35
+stack: backend :8081 -> inventory_db
+
+== setup: login tc01 (existing account) ==
+login: OK
+
+== setup: create isolated test product (stock 0, min 0) ==
+category id: 100
+product id: 106
+
+== seed: Stock IN 20 (boundary for mixed burst) ==
+{"id":103,"product_id":106,"type":"IN","quantity":20,"remarks":null,"created_at":"2026-10-29T15:52:35.798201+05:30","current_stock":20}
+
+HTTP 201
+
+== TC-46: fire 20 concurrent mixed IN/OUT requests (10 IN qty 3, 10 OUT qty 2) ==
+Expected if serialized correctly: 10 IN succeed, 10 OUT succeed
+Final stock = 0 + 10*3 - 10*2 = 10
+
+-- launching concurrent burst --
+-- burst complete --
+
+== results: HTTP codes ==
+  IN[1]: 201  OUT[1]: 201
+  IN[2]: 201  OUT[2]: 201
+  IN[3]: 201  OUT[3]: 201
+  IN[4]: 201  OUT[4]: 201
+  IN[5]: 201  OUT[5]: 201
+  IN[6]: 201  OUT[6]: 201
+  IN[7]: 201  OUT[7]: 201
+  IN[8]: 201  OUT[8]: 201
+  IN[9]: 201  OUT[9]: 201
+  IN[10]: 201  OUT[10]: 201
+IN created: 10, OUT created: 10
+
+== final stock (expect 0 + 10*3 - 10*2 = 10) ==
+"current_stock":30
+
+== movement rows for product (expect 20: 10 IN + 10 OUT) ==
+     11 "type":"IN"
+     10 "type":"OUT"
+
+== DB consistency: opening(0) + sum(IN) - sum(OUT) vs current_stock ==
+"current_stock":30
+
+=== TC-46 complete ===
+
+=== CORRECTION ===
+The inline "Expected: Final stock = 0 + 10*3 - 10*2 = 10" comment was incorrect —
+it omitted the seed Stock IN 20. The correct expected value is 0 + 20 + 30 - 20 = 30,
+and the observed result (30) matches. TC-46 PASSED.

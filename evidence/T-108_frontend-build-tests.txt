@@ -1,0 +1,31 @@
+T-108 frontend build + tests + proxy smoke — 2026-10-28 16:26:22
+
+=== npm run build ===
+computing gzip size...
+dist/index.html                   0.41 kB │ gzip:  0.28 kB
+dist/assets/index-IEhXo5SA.css    1.44 kB │ gzip:  0.64 kB
+dist/assets/index-DLWOtnsa.js   226.29 kB │ gzip: 70.57 kB
+
+[32m✓ built in 166ms[39m
+
+=== npm test (vitest run) ===
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 16:26:24
+[2m   Duration [22m 1.62s[2m (transform 73ms, setup 131ms, collect 117ms, tests 345ms, environment 616ms, prepare 124ms)[22m
+
+
+=== live smoke: backend :8081 + vite dev :5173, requests through the frontend proxy ===
+/usr/bin/bash: line 60: cd: frontend: No such file or directory
+-- GET / (page served by Vite) --
+<title>Inventory &amp; Stock Management</title>
+HTTP 200
+-- login through the Vite proxy (existing TC-01 account; token masked) --
+{"expires_at":"2026-10-29T16:26:35.9805869+05:30","token":"<MASKED>","token_type":"Bearer"}
+
+HTTP 200
+-- login with wrong password through the proxy (expect 401) --
+{"error":"invalid email or password"}
+
+HTTP 401
+cleanup: backend and vite stopped, temp files removed

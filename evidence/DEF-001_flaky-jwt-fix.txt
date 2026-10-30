@@ -1,0 +1,34 @@
+DEF-001 — flaky JWT test TestVerifyRejectsBadTokens/tampered_signature (backend/internal/auth/auth_test.go)
+Captured: 2026-10-29
+
+Root cause: the test flipped the FINAL base64url character of the token. A 43-char
+signature's last char carries 2 zero padding bits, so an A->B flip there can leave the
+decoded 32 signature bytes unchanged — the 'tampered' token still verifies. Rate: ~1/64
+fresh 'go test' invocations (the token depends on second-granularity exp, so -count=N
+in-process repeats share tokens and mask the flake).
+
+--- PRE-FIX failure (caught live, fresh invocation #9) ---
+--- FAIL: TestVerifyRejectsBadTokens (0.00s)
+    --- FAIL: TestVerifyRejectsBadTokens/tampered_signature (0.00s)
+        auth_test.go:93: Verify("tampered signature") accepted an invalid token
+FAIL
+FAIL	inventory-backend/internal/auth	1.208s
+FAIL
+
+--- FIX (test-only; assertion strength preserved) ---
+Flip a MID-segment character instead of the last (data bits only — the flip always
+changes the decoded signature bytes). Production auth code untouched.
+
+--- POST-FIX re-run (this capture, 2026-10-29) ---
+$ go test ./internal/auth/ -run TestVerifyRejectsBadTokens -count=200
+ok  	inventory-backend/internal/auth	1.225s
+
+$ 40 fresh 'go test' invocations:
+40/40 fresh invocations passed
+
+$ go test ./... -count=1
+ok  	inventory-backend/internal/api	3.362s
+ok  	inventory-backend/internal/auth	1.760s
+ok  	inventory-backend/internal/config	0.945s
+$ go vet ./... :
+clean

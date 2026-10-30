@@ -1,0 +1,86 @@
+T-208 integration checkpoint — 2026-10-29 11:46:00
+stack: frontend :5173 (proxy /api) -> backend :8081 -> inventory_db
+
+== 1. login User A (tc01@example.test, existing account) ==
+{"expires_at":"2026-10-30T11:46:00.83133… (token masked)
+token A captured (masked)
+
+== 2. register + login User B (t208-userb-1793254560@example.test) ==
+{"created_at":"2026-10-29T11:46:00.981117+05:30","email":"t208-userb-1793254560@example.test","id":88}
+
+HTTP 201
+token B captured (masked)
+
+== 3. A creates category (expect 201) ==
+{"id":98,"name":"T208-A-1793254560","created_at":"2026-10-29T11:46:01.184452+05:30","updated_at":"2026-10-29T11:46:01.184452+05:30"}
+
+HTTP 201
+category A id: 98
+
+== 4. A creates product (stock 10, min 3; expect 201) ==
+{"id":104,"category_id":98,"name":"T208-Prod-A","sku":"T208-A-1793254560","unit_price":2.5,"opening_stock":10,"current_stock":10,"min_stock":3,"status":"active","created_at":"2026-10-29T11:46:01.323032+05:30","updated_at":"2026-10-29T11:46:01.323032+05:30"}
+
+HTTP 201
+product A id: 104
+-- stock before movements --
+"current_stock":10
+
+== 5. A: Stock IN 5 (expect stock 15) ==
+{"id":98,"product_id":104,"type":"IN","quantity":5,"remarks":"T-208 checkpoint IN","created_at":"2026-10-29T11:46:01.510965+05:30","current_stock":15}
+
+HTTP 201
+-- stock now --
+"current_stock":15
+
+== 6. A: Stock OUT 4 (expect stock 11) ==
+{"id":99,"product_id":104,"type":"OUT","quantity":4,"remarks":null,"created_at":"2026-10-29T11:46:01.610916+05:30","current_stock":11}
+
+HTTP 201
+-- stock now --
+"current_stock":11
+
+== 7. A: history reflects movements (expect IN 5 + OUT 4) ==
+"type":"OUT","quantity":4
+"type":"IN","quantity":5
+
+== 8. A: dashboard snapshot (read-only) ==
+{"low_stock":[],"recent_transactions":[{"id":99,"product_id":104,"type":"OUT","quantity":4,"remarks":null,"created_at":"2026-10-29T11:46:01.610916+05:30"},{"id":98,"product_id":104,"type":"IN","quantity":5,"remarks":"T-208 checkpoint IN","created_at":"2026-10-29T11:46:01.510965+05:30"}],"totals":{"active_products":1,"categories":1,"low_stock":0}}
+
+
+== 9. AC-02: B reads A's category (expect 404) ==
+{"error":"category not found"}
+
+HTTP 404
+== 10. AC-02: B reads A's product (expect 404) ==
+{"error":"product not found"}
+
+HTTP 404
+== 11. AC-02: B renames A's category (expect 404) ==
+{"error":"category not found"}
+
+HTTP 404
+== 12. AC-02: B deletes A's product (expect 405/404) ==
+Method Not Allowed
+
+HTTP 405
+== 13. AC-02: B's history filter on A's product (expect empty list) ==
+{"transactions":[]}
+
+== 14. AC-02: B's dashboard shows only B's data ==
+{"low_stock":[],"recent_transactions":[],"totals":{"active_products":0,"categories":0,"low_stock":0}}
+
+
+== 15. validation: blank category name as A (expect 400) ==
+{"error":"category name is required"}
+
+HTTP 400
+== 16. validation: qty 0 movement as A (expect 400) ==
+{"error":"quantity must be a positive whole number"}
+
+HTTP 400
+== 17. logout A (expect 200) ==
+{"message":"logged out; discard the token client-side (stateless JWTs are not server-revoked)"}
+
+HTTP 200
+
+=== end of flow ===

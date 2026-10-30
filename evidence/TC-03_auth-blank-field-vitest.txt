@@ -1,0 +1,18 @@
+TC-03 — auth forms blank-field frontend validation (vitest, no-POST assertions)
+Captured: 2026-10-29 (execution time)
+Command:  npx vitest run src/auth.test.jsx  (run from frontend/)
+Scope:    register + login literal blank-field cases; suite total 10 tests
+Expected: submission blocked, field-level messages shown, zero POST calls
+---
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mE:/Inventory-Stock-Management/frontend[39m
+
+ [32m✓[39m src/auth.test.jsx [2m([22m[2m10 tests[22m[2m)[22m[33m 430[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 23:11:19
+[2m   Duration [22m 1.96s[2m (transform 138ms, setup 158ms, collect 207ms, tests 430ms, environment 676ms, prepare 159ms)[22m
+
+---
+vitest exit status: 0

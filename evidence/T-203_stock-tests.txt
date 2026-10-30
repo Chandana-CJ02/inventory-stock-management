@@ -1,0 +1,18 @@
+=== RUN   TestStockMovementIntegration
+=== RUN   TestStockMovementIntegration/invalid_qty_IN_0
+=== RUN   TestStockMovementIntegration/invalid_qty_IN_-3
+=== RUN   TestStockMovementIntegration/invalid_qty_IN_2.5
+=== RUN   TestStockMovementIntegration/invalid_qty_OUT_0
+=== RUN   TestStockMovementIntegration/invalid_qty_OUT_-3
+=== RUN   TestStockMovementIntegration/invalid_qty_OUT_2.5
+=== NAME  TestStockMovementIntegration
+    transactions_integration_test.go:281: TC-45 concurrency burst: 5 created, 5 conflicted, final stock 0, movements recorded correctly
+--- PASS: TestStockMovementIntegration (0.33s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_IN_0 (0.00s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_IN_-3 (0.00s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_IN_2.5 (0.00s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_OUT_0 (0.00s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_OUT_-3 (0.00s)
+    --- PASS: TestStockMovementIntegration/invalid_qty_OUT_2.5 (0.00s)
+PASS
+ok  	inventory-backend/internal/api	3.225s

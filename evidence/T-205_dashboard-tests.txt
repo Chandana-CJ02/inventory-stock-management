@@ -1,0 +1,7 @@
+=== RUN   TestDashboardIntegration
+--- PASS: TestDashboardIntegration (0.09s)
+PASS
+ok  	inventory-backend/internal/api	3.004s
+ok  	inventory-backend/internal/api	5.313s
+ok  	inventory-backend/internal/auth	2.337s
+ok  	inventory-backend/internal/config	1.699s

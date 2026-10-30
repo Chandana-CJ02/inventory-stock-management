@@ -1,0 +1,90 @@
+T-109 Day-1 integration smoke — 2026-10-28 16:38:54
+stack: Vite :5173 (proxy /api) -> Go :8081 -> PostgreSQL inventory_db (as inventory_app)
+Prerequisite checks: both servers verified listening; /healthz 200 database:up before this flow.
+
+== step 1: register user A (smoke-a-1793185734@example.test) ==
+HTTP 201
+{"created_at":"2026-10-28T16:38:55.128842+05:30","email":"smoke-a-1793185734@example.test","id":7}
+
+== step 2: register user B (smoke-b-1793185734@example.test) ==
+HTTP 201
+{"created_at":"2026-10-28T16:38:55.304751+05:30","email":"smoke-b-1793185734@example.test","id":8}
+
+== step 3: login A (AC-01: token issued; token itself never displayed) ==
+HTTP 200
+{"expires_at":"2026-10-29T16:39:18.4728169+05:30","token":"<MASKED>","token_type":"Bearer"}
+
+== step 4: login B ==
+HTTP 200
+{"expires_at":"2026-10-29T16:39:18.6550952+05:30","token":"<MASKED>","token_type":"Bearer"}
+
+===== authenticated category + isolation flow (users A id=7 / B id=8 from steps 1-2; logins re-run for token capture) =====
+== 3r: login A (re-run for this captured pass; token never displayed) ==
+HTTP 200
+{"expires_at":"2026-10-29T16:41:03.1893388+05:30","token":"<MASKED>","token_type":"Bearer"}
+
+result: PASS (HTTP 200)
+== 3r: login B ==
+HTTP 200
+{"expires_at":"2026-10-29T16:41:03.37749+05:30","token":"<MASKED>","token_type":"Bearer"}
+
+result: PASS (HTTP 200)
+== 5: A creates category 'Smoke-<ns2>' (expect 201) ==
+HTTP 201
+{"id":12,"name":"Smoke-025746800","created_at":"2026-10-28T16:41:03.458039+05:30","updated_at":"2026-10-28T16:41:03.458039+05:30"}
+
+result: PASS (HTTP 201)
+category A id: 12
+== 6: B creates the SAME name (expect 201 — per-user uniqueness) ==
+HTTP 201
+{"id":13,"name":"Smoke-025746800","created_at":"2026-10-28T16:41:03.561945+05:30","updated_at":"2026-10-28T16:41:03.561945+05:30"}
+
+result: PASS (HTTP 201)
+== 7: AC-02 — B reads A's category (expect 404) ==
+HTTP 404
+{"error":"category not found"}
+
+result: PASS (HTTP 404)
+== 8: AC-02 — B updates A's category (expect 404) ==
+HTTP 404
+{"error":"category not found"}
+
+result: PASS (HTTP 404)
+== 9: AC-02 — B deletes A's category (expect 404) ==
+HTTP 404
+{"error":"category not found"}
+
+result: PASS (HTTP 404)
+== 10: AC-02 — A's list contains only A's data (expect 200, 1 own, 0 foreign) ==
+HTTP 200
+{"categories":[{"id":9,"name":"Renamed-1793185734","created_at":"2026-10-28T16:39:54.283941+05:30","updated_at":"2026-10-28T16:39:55.04723+05:30"},{"id":12,"name":"Smoke-<NS2>","created_at":"2026-10-28T16:41:03.458039+05:30","updated_at":"2026-10-28T16:41:03.458039+05:30"}]}
+
+result: PASS (HTTP 200)
+own category exactly once
+no foreign rows in A's list
+== 11: A duplicates own name (expect 409) ==
+HTTP 409
+{"error":"a category with this name already exists"}
+
+result: PASS (HTTP 409)
+== 12: A renames own category (expect 200) ==
+HTTP 200
+{"id":12,"name":"Renamed-<NS2>","created_at":"2026-10-28T16:41:03.458039+05:30","updated_at":"2026-10-28T16:41:04.097459+05:30"}
+
+result: PASS (HTTP 200)
+== 13: A blank name (expect 400) ==
+HTTP 400
+{"error":"category name is required"}
+
+result: PASS (HTTP 400)
+== 14: A logout (expect 200 — client-side discard, no server revocation) ==
+HTTP 200
+{"message":"logged out; discard the token client-side (stateless JWTs are not server-revoked)"}
+
+result: PASS (HTTP 200)
+
+===== authenticated flow complete: all steps passed =====
+
+== 15: frontend page served by Vite (expect 200 + title) ==
+<title>Inventory &amp; Stock Management</title>
+HTTP 200

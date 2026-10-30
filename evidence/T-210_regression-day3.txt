@@ -1,0 +1,39 @@
+=== T-208/Day 3 regression — 2026-10-29 21:45:10 ===
+
+-- healthz --
+  PASS: healthz (HTTP 200)
+-- frontend --
+  PASS: frontend (HTTP 200)
+-- login A (tc01) --
+  PASS: login A
+-- login B (t208-userb) --
+  PASS: login B
+-- AC-02: B reads A's category (404) --
+  PASS: AC-02 category (HTTP 404)
+-- AC-02: B reads A's product (404) --
+  PASS: AC-02 product (HTTP 404)
+-- AC-02: B's history (empty/no A data) --
+  PASS: B's history has no A's data
+-- AC-02: B's dashboard (zeros) --
+  PASS: B's dashboard isolated
+-- AC-14: product 104 status (should be active) --
+  PASS: product 104 active (HTTP "status":"active")
+-- AC-14: deactivate + reactivate --
+  PASS: deactivate (HTTP "status":"inactive")
+  PASS: reactivate (HTTP "status":"active")
+-- AC-09: qty 0 rejected (400) --
+  PASS: AC-09 qty 0 (HTTP 400)
+-- AC-10: OUT beyond stock rejected (409) --
+  PASS: AC-10 insufficient (HTTP 409)
+-- AC-05: fractional opening stock (400) --
+  PASS: AC-05 fractional (HTTP 400)
+-- AC-04: negative price (400) --
+  PASS: AC-04 negative price (HTTP 400)
+-- AC-06: duplicate SKU (409) --
+  PASS: AC-06 duplicate SKU (HTTP 409)
+-- AC-08: delete category with product (409) --
+  PASS: AC-08 delete guard (HTTP 409)
+
+==========================================
+  RESULTS: PASS=17 FAIL=0
+==========================================

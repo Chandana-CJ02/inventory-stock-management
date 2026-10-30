@@ -1,0 +1,7 @@
+=== RUN   TestCategoryCRUDIntegration
+--- PASS: TestCategoryCRUDIntegration (0.13s)
+PASS
+ok  	inventory-backend/internal/api	2.487s
+ok  	inventory-backend/internal/api	2.318s
+ok  	inventory-backend/internal/auth	1.361s
+ok  	inventory-backend/internal/config	0.589s
